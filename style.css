@@ -1,0 +1,34 @@
+
+#bg{
+    width: 320px;
+    height: 350px;
+    background-image: url("bg.png");
+    position: relative; 
+    z-index: -1;
+}
+.char{
+    width: 250px;
+    height: 250px;
+    z-index: 1;
+}
+.cat{
+    width: 100px;
+    height: 100px;
+    position: relative;
+    z-index: 2;
+    
+}
+
+.bt{
+    width: 80px;
+    height: 40px;
+    position: relative;
+    z-index: 2;
+}
+.txt{
+    width: 320px;
+    height: 40px;
+    position: relative;
+    top: 310px;
+    z-index: 3;
+}
