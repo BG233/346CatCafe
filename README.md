@@ -1,1 +1,1 @@
-# 346CatCafe.github.io
+# 346CatCafe
