@@ -522,13 +522,13 @@ window.onload = function () {
 
                     if(stg==0){
 
-                        alert(stg);
+                        // alert(stg);
 
                         label.text = '然而什么也没发生';
                         recover();
                     }else if (stg == 1){ //回喵 或者入队
 
-                        alert(stg);
+                        // alert(stg);
 
                         //特判凛直接入队
                         if(meetObj.name=='凛'){
