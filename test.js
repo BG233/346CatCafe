@@ -1,12 +1,6 @@
 enchant();
-var VERSION = "ver0.0.0";
+var VERSION = "ver 0.0.0";
 
-
-var customer_list = [
-    new Customer('有点脸熟的OL','chara/chr1.png',['送出了生火腿蜜瓜','卯月猫被抢走了','卯月猫被大摸了一把'],['win','lose','touch'])
-
-
-];
 
 function Cat(name, enqueue_fig, store_fig, store_when_enq,sound,touch){
     this.name = name;
@@ -50,6 +44,7 @@ window.onload = function () {
         'bg/bg.png',
         'bg/win.png',
         'bg/gameover.png',
+        'bg/gameover_sp.png',
         'emp_tmp.png',
 
         'cats/ept.png',
@@ -70,6 +65,7 @@ window.onload = function () {
 
         'cats/cat4_store.png',
     
+        'btn/skip.png',
         'btn/bt1.png',
         'btn/bt1_1.png',
         'btn/bt2.png',
@@ -82,6 +78,8 @@ window.onload = function () {
         'txt/txt1.png',
     
         'chara/chr1.png',
+        'chara/chr2.png',
+        'chara/chr3.png',
 
         'skill/skill1_1.png',
         'skill/skill1_2_1.png',
@@ -101,6 +99,24 @@ window.onload = function () {
             bg.image = GameObject.assets['op/op1.png'];
             bg.y = DISPLAY_Y/2-300;
             scene.addChild(bg);
+
+            skip = new Sprite(100,60);
+            skip.image = GameObject.assets['btn/skip.png'];
+            skip.x = DISPLAY_X-120; 
+            skip.y =20;
+            scene.addChild(skip);
+            skip.addEventListener(Event.TOUCH_END, function (e) {
+                GameObject.replaceScene(SceneMaker.createGameScene());
+            });
+
+            var l = new Label('Touch to Continue');
+            l.textAlign = 'center';
+            l.color = '#000';
+            l.x = 0;
+            l.y = 900;
+            l.width = DISPLAY_X;
+            l.font = '15px sans-serif';
+            scene.addChild(l);
             
 
             var num = 1;
@@ -124,6 +140,20 @@ window.onload = function () {
                 new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...',''),
             
             ]
+
+            var customer_list = [
+                new Customer('有点脸熟的OL','chara/chr1.png',
+                            ['送出了生火腿蜜瓜','卯月猫被抢走了','卯月猫被大摸了一把'],
+                            ['win','lose','touch']),
+
+                new Customer('小情侣','chara/chr2.png',
+                            ['送出了生火腿蜜瓜','摸了摸卯月猫的肚皮'],
+                            ['win','touch']),
+                new Customer('在撸自己家的猫的Big Brige小姐','chara/chr3.png',
+                            ['自己吃了生火腿蜜瓜','摸了摸卯月猫'],
+                            ['txt','touch']),
+            
+            ];
 
             var by_op1 = 0;
             var by_op2 = 0;
@@ -310,6 +340,7 @@ window.onload = function () {
                     //回收上个情况
                     label.text = '';
                     skill_fig.image = GameObject.assets['emp_tmp.png']; 
+                    
                     meet.image = GameObject.assets['emp_tmp.png'];
                     //凛的特判
                     if (cat_list[0].meet_time==2 && cat_list[0].name=='凛' && ((queue.length==0)||(queue.length==1&&queue[0].name!='凛'))){ 
@@ -333,23 +364,32 @@ window.onload = function () {
                         bt1.image = GameObject.assets['btn/bt1_1.png'];
                         return;
                     }
+
+                    meet.tl
+                    .moveBy(5,0, 5)
+                    .then(function(){
+                        var a=Math.random();
+                        if (a<0.2){ //empty
+                            label.text = '这里啥也没有';
+                            stage = 0;
+                
+                        }else if(a<0.6){ //meet cat    
+                            stage = 1;
+                            meet_cat();
+                
+                        }else{ //meet customer
+                            // label.text = '猫咖里的客人出现了';
+                            stage = 2;
+                            meet_customer()
+                        }
+                        
+                        meet.tl.moveBy(-5,0, 5);
+                        
+                        init_state()
+
+                    });
             
-                    var a=Math.random();
-                    if (a<0.2){ //empty
-                        label.text = '这里啥也没有';
-                        stage = 0;
-            
-                    }else if(a<0.6){ //meet cat    
-                        stage = 1;
-                        meet_cat();
-            
-                    }else{ //meet customer
-                        // label.text = '猫咖里的客人出现了';
-                        stage = 2;
-                        meet_customer()
-                    }
                     
-                    init_state()
                 }
                 
             
@@ -382,8 +422,11 @@ window.onload = function () {
                 bt3.image = GameObject.assets['btn/bt3_1.png'];
             });
             bt3.addEventListener(Event.TOUCH_END, function (e) {
-                passby();
-                bt3.image = GameObject.assets['btn/bt3.png'];
+                if (can_pass){
+                    passby();
+                    bt3.image = GameObject.assets['btn/bt3.png'];
+                }
+                
             });
 
 
@@ -411,7 +454,7 @@ window.onload = function () {
             //特技披露
 
             function kttk(stg, with_rin){
-                skill_ani_done = 0;
+
                 skill_fig.image = GameObject.assets['skill/skill1_1.png'];
 
                 skill_fig.tl
@@ -476,6 +519,7 @@ window.onload = function () {
                 function after(){
                     if(stg==0){
                         label.text = '然而什么也没发生';
+                        recover();
                     }else if (stg == 1){ //回喵 或者入队
 
                         //特判凛直接入队
@@ -492,14 +536,21 @@ window.onload = function () {
                             label.text = meetObj.name+"加入了队伍";
                             return;
                         }
-                        
-                        label.text = meetObj.name+'用爪子挠了挠头';
-    
+                        if (meetObj.name!='响子画的猫')
+                            label.text = meetObj.name+'用爪子挠了挠头';
+                        else
+                            label.text = '什么也没发生';
+
+                        recover();
+
                     }else if (stg == 2){//没看见或者回应
-                        var tmp = Math.random<0.5;
-                        if (meetObj.name = '有点脸熟的OL') tmp = 0;
+                        var tmp = Math.random();
+
+                        if (meetObj.name == '有点脸熟的OL') tmp = 0;
+
 
                         if(tmp<0.5){  //看向了这边
+
                             label.text = meetObj.name+'看向了这边';
 
                             meet.tl
@@ -509,17 +560,17 @@ window.onload = function () {
 
                                 switch(meetObj.tag[index]){
                                     case "win": 
-                                        if (meetObj.name = '有点脸熟的OL') end_tag = '346';
+                                        if (meetObj.name == '有点脸熟的OL') end_tag = '346';
                                         // label.text = meetObj.reaction[index];
                                         GameObject.replaceScene(SceneMaker.Win());
                                         break;
                                     case "lose":
-                                        if (meetObj.name = '有点脸熟的OL') end_tag = '346';
+                                        if (meetObj.name == '有点脸熟的OL') end_tag = '346';
                                         GameObject.replaceScene(SceneMaker.GameOver());
                                         break;
                                     case "eat":
 
-    
+                                        recover();
                                         break;
                                     case "touch"://摸摸卯卯猫猫
                                         label.text = meetObj.reaction[index];
@@ -536,12 +587,14 @@ window.onload = function () {
                                                 if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2.png']; 
                                                 else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2.png']; 
                                             }
+                                            recover();
                                         });
                         
                                         break;
                                     case "txt":
-                                        
-                                        
+                                        label.text = meetObj.reaction[index];
+
+                                        recover();
                                         break;
     
                                 }
@@ -552,20 +605,23 @@ window.onload = function () {
                             
                         }else{
                             label.text = meetObj.name+'并没有注意到这边';
+                            recover();
+                        }
+
+                        function recover(){
+                            if(by_op2){
+                                can_op1 = 1;
+                                bt1.image = GameObject.assets['btn/bt1.png'];
+                            }
+                            can_pass = 1;
+                            bt3.image = GameObject.assets['btn/bt3.png'];
                         }
     
                     }
 
-                    if(by_op2){
-                        can_op1 = 1;
-                        bt1.image = GameObject.assets['btn/bt1.png'];
-                    }
-                    can_pass = 1;
-                    bt3.image = GameObject.assets['btn/bt3.png'];
                     
 
-                }
-                
+                }               
 
             }
 
@@ -608,7 +664,7 @@ window.onload = function () {
                     }
 
                     show_skill();
-                    // can_op = 1;
+                    
                 }
             
             });
@@ -638,6 +694,9 @@ window.onload = function () {
             function meow(){
                 var uzu_sound = ['うづう〜','皮酿酿~','HEGO!'];
                 var index = Math.floor((Math.random()* uzu_sound.length));
+                //sp judge
+                if(meet.Obj!=null&&meetObj.figure=='chara/chr3.png') index = 2;
+
                 txt1.image = GameObject.assets['txt/txt1.png'];
                 lb1.text = uzu_sound[index];
                 txt1.tl
@@ -647,6 +706,8 @@ window.onload = function () {
                     lb1.text = '';
                     feedback();
                 });
+
+                
 
                 if (queue.length>=1){
                     txt2.image = GameObject.assets['txt/txt1.png'];
@@ -679,21 +740,44 @@ window.onload = function () {
                         .then(function(){
                             txt0.image = GameObject.assets['emp_tmp.png'];
                             label.text = '';
+                            recover();
                         });
 
 
                     }else if(stage == 2){
+                        if(meetObj.figure=='chara/chr3.png'){//hassy的特判
+
+                            txt0.image = GameObject.assets['txt/txt1.png'];
+                            label.text = 'HEGO!!';
+                            txt0.tl
+                            .delay(30)
+                            .then(function(){
+                                txt0.image = GameObject.assets['emp_tmp.png'];
+                                label.text = '';
+                                recover();
+                            });
+
+
+                        }else{
+                            label.text = meetObj.name + '不知道听没听见';
+                            recover();
+                        }
 
                     }else{
                         label.text = '然而什么也没发生……';
+                        recover();
                     }
 
-                    if (by_op1){
-                        can_op2 = 1;
-                        bt2.image = GameObject.assets['btn/bt2.png'];
+                    function recover(){
+                        if (by_op1){
+                            can_op2 = 1;
+                            bt2.image = GameObject.assets['btn/bt2.png'];
+                        }
+                        can_pass = 1;
+                        bt3.image = GameObject.assets['btn/bt3.png'];
+
                     }
-                    can_pass = 1;
-                    bt3.image = GameObject.assets['btn/bt3.png'];
+                    
                     
                     
                 }
@@ -714,13 +798,16 @@ window.onload = function () {
 
 
             bg = new  Sprite(640,1000);
-            bg.image = GameObject.assets['bg/gameover.png'];
+            if(end_tag == '346' && (unit == 'uzurin' || unit == 'NG'))
+                bg.image = GameObject.assets['bg/gameover_sp.png'];
+            else
+                bg.image = GameObject.assets['bg/gameover.png'];
             scene.addChild(bg);
 
             restart = new  Sprite(200,100);
             restart.image = GameObject.assets['btn/restart.png'];
             restart.x = DISPLAY_X/2;
-            restart.y = DISPLAY_Y/2;
+            restart.y = DISPLAY_Y/2+100;
             scene.addChild(restart);
 
             restart.addEventListener(Event.TOUCH_END, function (e) {
@@ -745,7 +832,7 @@ window.onload = function () {
             restart = new  Sprite(200,100);
             restart.image = GameObject.assets['btn/restart.png'];
             restart.x = DISPLAY_X/2;
-            restart.y = DISPLAY_Y/2;
+            restart.y = DISPLAY_Y/2+100;
             scene.addChild(restart);
 
             restart.addEventListener(Event.TOUCH_END, function (e) {
