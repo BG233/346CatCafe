@@ -31,7 +31,7 @@ var end_tag = ''; //normal 346<-常务
 window.onload = function () {
     GameObject = new Core(DISPLAY_X, DISPLAY_Y);
     GameObject.fps = FPS;
-    GameObject.scale = 1;
+    // GameObject.scale = 1;
 
     GameObject.preload(
         'test.png',
@@ -93,6 +93,7 @@ window.onload = function () {
         );
 
     GameObject.onload = function () {
+        
         // start scene
         SceneMaker.createStartScene = function () {
             var scene = new Scene();
