@@ -1,18 +1,9 @@
 enchant();
 var VERSION = "ver1.0.0";
 
-var cat_list =[
-    new Cat('凛', 'cats/cat2.png', ['cats/cat2_store1.png'],['cats/cat2_store1_1.png'],'ふーん','cats/cat2_touch.png'),
-    new Cat('未央', '', ['cats/cat3_store1.png'],[],'MIO',''),
-    
-    // new Cat('响子画的', 'test.png', ['test.png'],['test.png'],'233',''),
-    new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...',''),
-
-
-]
 
 var customer_list = [
-    new Customer('有点脸熟的OL','chara/chr1.png',['送出了生火腿蜜瓜','卯月猫被抢走了'],['win','lose'])
+    new Customer('有点脸熟的OL','chara/chr1.png',['送出了生火腿蜜瓜','卯月猫被抢走了','卯月猫被大摸了一把'],['win','lose','touch'])
 
 
 ];
@@ -85,7 +76,6 @@ window.onload = function () {
 
         'btn/restart.png',
     
-        'txt/ept.png',
         'txt/txt1.png',
     
         'chara/chr1.png',
@@ -131,6 +121,15 @@ window.onload = function () {
         };
 
         SceneMaker.createGameScene = function () {
+            var cat_list =[
+                new Cat('凛', 'cats/cat2.png', ['cats/cat2_store1.png'],['cats/cat2_store1_1.png'],'ふーん','cats/cat2_touch.png'),
+                new Cat('未央', '', ['cats/cat3_store1.png'],[],'MIO',''),
+                
+                // new Cat('响子画的', 'test.png', ['test.png'],['test.png'],'233',''),
+                new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...',''),
+            
+            ]
+            
             var stage = 0;
             var queue = new Array();
             var can_pass = 1, can_op1=1, can_op2=1, skill_ctn = 0;
@@ -438,7 +437,7 @@ window.onload = function () {
                                 var index = Math.floor((Math.random()* meetObj.tag.length)); 
 
                                 switch(meetObj.tag[index]){
-                                    case "win":
+                                    case "win": 
                                         if (meetObj.name = '有点脸熟的OL') end_tag = '346';
                                         // label.text = meetObj.reaction[index];
                                         GameObject.replaceScene(SceneMaker.Win());
@@ -448,10 +447,26 @@ window.onload = function () {
                                         GameObject.replaceScene(SceneMaker.GameOver());
                                         break;
                                     case "eat":
+
     
                                         break;
-                                    case "touch":
-    
+                                    case "touch"://摸摸卯卯猫猫
+                                        label.text = meetObj.reaction[index];
+                                        cat1.image = GameObject.assets['cats/cat1_touch.png']; 
+                                        if (queue.length>0){
+                                            if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2_touch_sp.png']; 
+                                            else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2_touch_sp.png']; 
+                                        }
+                                        cat1.tl
+                                        .delay(20)
+                                        .then(function(){
+                                            cat1.image = GameObject.assets['cats/cat1.png']; 
+                                            if (queue.length>0){
+                                                if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2.png']; 
+                                                else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2.png']; 
+                                            }
+                                        });
+                        
                                         break;
     
                                 }
@@ -507,10 +522,17 @@ window.onload = function () {
             //喵
 
             bt1.addEventListener(Event.TOUCH_END, function (e) {
-                
-                can_op1 = 0;
-                bt1.image = GameObject.assets['btn/bt1_1.png'];
+
+                if(can_op1){
+                    can_op1 = 0;
+                    bt1.image = GameObject.assets['btn/bt1_1.png'];
+                    meow();
+                }    
             });
+
+            function meow(){
+
+            }
 
 
 
