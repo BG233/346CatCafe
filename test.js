@@ -1,5 +1,5 @@
 enchant();
-var VERSION = "ver1.0.0";
+var VERSION = "ver0.0.0";
 
 
 var customer_list = [
@@ -22,7 +22,7 @@ function Customer(name,figure,reaction,tag){
     this.name = name;
     this.figure = figure;
     this.reaction = reaction;
-    this.tag = tag; //win lose eat touch
+    this.tag = tag; //win lose eat touch txt
 }
 
 var FPS = 24;
@@ -58,11 +58,14 @@ window.onload = function () {
 
         'cats/cat2_store1.png',
         'cats/cat2_store1_1.png',
+        'cats/cat2_store2_1.png',
+        'cats/cat2_store2_2.png',
         'cats/cat2_touch_sp.png',
         'cats/cat2_touch.png',
         'cats/cat2.png',
 
         'cats/cat3_store1.png',
+        'cats/cat3_store2.png',
         'cats/cat3.png',
 
         'cats/cat4_store.png',
@@ -94,19 +97,11 @@ window.onload = function () {
             var scene = new Scene();
             scene.backgroundColor = '#ffffff';
 
-            var versionLabel = new Label(VERSION);
-            versionLabel.textAlign = 'center';
-            versionLabel.color = '#000';
-            versionLabel.x = 0;
-            versionLabel.y = 8;
-            versionLabel.width = DISPLAY_X - 8;
-            versionLabel.font = '15px sans-serif';
-
             bg = new  Sprite(640,700);
             bg.image = GameObject.assets['op/op1.png'];
             bg.y = DISPLAY_Y/2-300;
             scene.addChild(bg);
-            scene.addChild(versionLabel);
+            
 
             var num = 1;
             bg.addEventListener(Event.TOUCH_START, function (e){
@@ -122,13 +117,16 @@ window.onload = function () {
 
         SceneMaker.createGameScene = function () {
             var cat_list =[
-                new Cat('凛', 'cats/cat2.png', ['cats/cat2_store1.png'],['cats/cat2_store1_1.png'],'ふーん','cats/cat2_touch.png'),
-                new Cat('未央', '', ['cats/cat3_store1.png'],[],'MIO',''),
+                new Cat('凛', 'cats/cat2.png', ['cats/cat2_store1.png','cats/cat2_store2_1.png'],['cats/cat2_store1_1.png','cats/cat2_store2_2.png'],'ふーん','cats/cat2_touch.png'),
+                new Cat('未央', '', ['cats/cat3_store1.png','cats/cat3_store2.png'],[],'MIO',''),
                 
                 // new Cat('响子画的', 'test.png', ['test.png'],['test.png'],'233',''),
                 new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...',''),
             
             ]
+
+            var by_op1 = 0;
+            var by_op2 = 0;
             
             var stage = 0;
             var queue = new Array();
@@ -156,14 +154,28 @@ window.onload = function () {
             skill_fig.x = DISPLAY_X/2-175; skill_fig.y = 200;
             scene.addChild(skill_fig);
 
+            txt0 = new Sprite(200,80);
+            txt0.image = GameObject.assets['emp_tmp.png']; //
+            txt0.x = DISPLAY_X/2-100; txt0.y = 0;
+            scene.addChild(txt0);
+
             var label = new Label();
-            label.text = 'うづう〜';
+            label.text = '在店里找找有没有生火腿吧';
             label.textAlign = 'center';
             label.color = '#000';
-            label.x = 0; label.y = 15;
-            label.width = DISPLAY_X-20;
+            label.x = 0; label.y = 20;
+            label.width = DISPLAY_X;
             label.font = '25px sans-serif';
             scene.addChild(label);
+
+            var versionLabel = new Label(VERSION);
+            versionLabel.textAlign = 'right';
+            versionLabel.color = '#000';
+            versionLabel.x = 0;
+            versionLabel.y = 2;
+            versionLabel.width = DISPLAY_X-4;
+            versionLabel.font = '15px sans-serif';
+            scene.addChild(versionLabel);
 
             cat1 = new Sprite(200,200);
             cat1.image = GameObject.assets['cats/cat1.png'];
@@ -207,7 +219,63 @@ window.onload = function () {
             cat3.image = GameObject.assets['cats/ept.png'];
             cat3.x = 400+10; cat3.y = DISPLAY_Y-400;
             scene.addChild(cat3);
+            //touch
+            cat3.addEventListener(Event.TOUCH_START, function (e) {
+                if (queue.length==2){
+                    cat3.image = GameObject.assets[queue[1].touch]; 
+                }
+            });
+            cat3.addEventListener(Event.TOUCH_END, function (e) {
+                if (queue.length==2){
+                    cat3.image = GameObject.assets[queue[1].enqueue_fig]; 
+                }
+            });
 
+            //喵的框
+
+            txt1 = new Sprite(200,80);
+            txt1.image = GameObject.assets['emp_tmp.png']; //'emp_tmp.png'
+            txt1.x = 15; txt1.y = DISPLAY_Y-470;
+            scene.addChild(txt1);
+
+            txt2 = new Sprite(200,80);
+            txt2.image = GameObject.assets['emp_tmp.png']; //'emp_tmp.png'
+            txt2.x = 200+15; txt2.y = DISPLAY_Y-470;
+            scene.addChild(txt2);
+
+            txt3 = new Sprite(200,80);
+            txt3.image = GameObject.assets['emp_tmp.png']; //'emp_tmp.png'
+            txt3.x = 400+15; txt3.y = DISPLAY_Y-470;
+            scene.addChild(txt3);
+
+            var lb1= new Label();
+            lb1.text = '';
+            lb1.textAlign = 'center';
+            lb1.color = '#000';
+            lb1.x = 15; lb1.y = DISPLAY_Y-445;
+            lb1.width = 200;
+            lb1.font = '25px sans-serif';
+            scene.addChild(lb1);
+
+            var lb2= new Label();
+            lb2.text = '';
+            lb2.textAlign = 'center';
+            lb2.color = '#000';
+            lb2.x = 200+15; lb2.y = DISPLAY_Y-445;
+            lb2.width = 200;
+            lb2.font = '25px sans-serif';
+            scene.addChild(lb2);
+
+            var lb3= new Label();
+            lb3.text = '';
+            lb3.textAlign = 'center';
+            lb3.color = '#000';
+            lb3.x = 400+15; lb3.y = DISPLAY_Y-445;
+            lb3.width = 200;
+            lb3.font = '25px sans-serif';
+            scene.addChild(lb3);
+
+            //按钮
             bt1 = new Sprite(200,100);
             bt1.image = GameObject.assets['btn/bt1.png'];
             bt1.x = 20; bt1.y = DISPLAY_Y-180;
@@ -230,6 +298,8 @@ window.onload = function () {
                     can_pass = 1;
                         can_op1 = 1;
                         can_op2 = 1;
+                        by_op1 = 0;
+                        by_op2 = 0;
                         bt1.image = GameObject.assets['btn/bt1.png'];
                         bt2.image = GameObject.assets['btn/bt2.png'];
                 }
@@ -330,6 +400,7 @@ window.onload = function () {
                     cat_list.splice(tmp_index,1);
 
                     can_pass = 1;
+                    bt3.image = GameObject.assets['btn/bt3.png'];
                     can_op2 = 0;
                     bt2.image = GameObject.assets['btn/bt2_1.png'];
                     can_op1 = 0;
@@ -422,7 +493,7 @@ window.onload = function () {
                             return;
                         }
                         
-                        label.text = meetObj.name+'发出了'+meetObj.sound+'的声音';
+                        label.text = meetObj.name+'用爪子挠了挠头';
     
                     }else if (stg == 2){//没看见或者回应
                         var tmp = Math.random<0.5;
@@ -468,6 +539,10 @@ window.onload = function () {
                                         });
                         
                                         break;
+                                    case "txt":
+                                        
+                                        
+                                        break;
     
                                 }
 
@@ -480,12 +555,21 @@ window.onload = function () {
                         }
     
                     }
+
+                    if(by_op2){
+                        can_op1 = 1;
+                        bt1.image = GameObject.assets['btn/bt1.png'];
+                    }
+                    can_pass = 1;
+                    bt3.image = GameObject.assets['btn/bt3.png'];
+                    
+
                 }
                 
 
             }
 
-            function show_skill(){//之后改成根据组合判断技能！！！！！！！！！！！！！！！！！！！！！！
+            function show_skill(){//之后改成根据组合判断技能==============================
 
                 if (queue.length == 0){
                     kttk(stage, 0);
@@ -513,6 +597,16 @@ window.onload = function () {
                 if(can_op2){
                     can_op2 = 0;
                     bt2.image = GameObject.assets['btn/bt2_1.png'];
+
+                    can_pass = 0;
+                    bt3.image = GameObject.assets['btn/bt3_1.png'];
+
+                    if (can_op1){
+                        can_op1 = 0;
+                        bt1.image = GameObject.assets['btn/bt1_1.png'];
+                        by_op2 = 1;
+                    }
+
                     show_skill();
                     // can_op = 1;
                 }
@@ -526,11 +620,84 @@ window.onload = function () {
                 if(can_op1){
                     can_op1 = 0;
                     bt1.image = GameObject.assets['btn/bt1_1.png'];
+
+                    can_pass = 0;
+                    bt3.image = GameObject.assets['btn/bt3_1.png'];
+                    
+                    if (can_op2){
+                        can_op2 = 0;
+                        bt2.image = GameObject.assets['btn/bt2_1.png'];
+                        by_op1 = 1;
+                    }
+                    
                     meow();
+                    
                 }    
             });
 
             function meow(){
+                var uzu_sound = ['うづう〜','皮酿酿~','HEGO!'];
+                var index = Math.floor((Math.random()* uzu_sound.length));
+                txt1.image = GameObject.assets['txt/txt1.png'];
+                lb1.text = uzu_sound[index];
+                txt1.tl
+                .delay(30)
+                .then(function(){
+                    txt1.image = GameObject.assets['emp_tmp.png'];
+                    lb1.text = '';
+                    feedback();
+                });
+
+                if (queue.length>=1){
+                    txt2.image = GameObject.assets['txt/txt1.png'];
+                    lb2.text = queue[0].sound;
+                    txt2.tl
+                    .delay(30)
+                    .then(function(){
+                        txt2.image = GameObject.assets['emp_tmp.png'];
+                        lb2.text = '';
+                    });
+                }
+
+                if (queue.length==2){
+                    txt3.image = GameObject.assets['txt/txt1.png'];
+                    lb3.text = queue[1].sound;
+                    txt3.tl
+                    .delay(30)
+                    .then(function(){
+                        txt3.image = GameObject.assets['emp_tmp.png'];
+                        lb3.text = '';
+                    });
+                }
+
+                function feedback(){
+                    if(stage == 1){
+                        txt0.image = GameObject.assets['txt/txt1.png'];
+                        label.text = meetObj.sound;
+                        txt0.tl
+                        .delay(30)
+                        .then(function(){
+                            txt0.image = GameObject.assets['emp_tmp.png'];
+                            label.text = '';
+                        });
+
+
+                    }else if(stage == 2){
+
+                    }else{
+                        label.text = '然而什么也没发生……';
+                    }
+
+                    if (by_op1){
+                        can_op2 = 1;
+                        bt2.image = GameObject.assets['btn/bt2.png'];
+                    }
+                    can_pass = 1;
+                    bt3.image = GameObject.assets['btn/bt3.png'];
+                    
+                    
+                }
+
 
             }
 
