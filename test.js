@@ -153,7 +153,7 @@ window.onload = function () {
                 new Customer('小情侣','chara/chr2.png',
                             ['送出了生火腿蜜瓜','摸了摸卯月猫的肚皮'],
                             ['win','touch']),
-                new Customer('在撸自己家的猫的Big Brige小姐','chara/chr3.png',
+                new Customer('在撸自己家的猫的Big Bridge小姐','chara/chr3.png',
                             ['自己吃了生火腿蜜瓜','摸了摸卯月猫'],
                             ['txt','touch']),
             
