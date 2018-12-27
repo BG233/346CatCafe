@@ -607,19 +607,17 @@ window.onload = function () {
                             label.text = meetObj.name+'并没有注意到这边';
                             recover();
                         }
-
-                        function recover(){
-                            if(by_op2){
-                                can_op1 = 1;
-                                bt1.image = GameObject.assets['btn/bt1.png'];
-                            }
-                            can_pass = 1;
-                            bt3.image = GameObject.assets['btn/bt3.png'];
-                        }
     
                     }
 
-                    
+                    function recover(){
+                        if(by_op2){
+                            can_op1 = 1;
+                            bt1.image = GameObject.assets['btn/bt1.png'];
+                        }
+                        can_pass = 1;
+                        bt3.image = GameObject.assets['btn/bt3.png'];
+                    }
 
                 }               
 
