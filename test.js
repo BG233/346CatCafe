@@ -86,7 +86,10 @@ window.onload = function () {
         'skill/skill1_2_2.png',
         'skill/skill1_3_1.png',
         'skill/skill1_3_2.png',
-        'skill/skill1_4.png'
+        'skill/skill1_4.png',
+
+        'skill/skill2_1.png',
+        'skill/skill2_2.png'
         );
 
     GameObject.onload = function () {
@@ -453,76 +456,102 @@ window.onload = function () {
             }
             //特技披露
 
-            function kttk(stg, with_rin){
+            function do_skill(name,stg, with_rin){
 
-                skill_fig.image = GameObject.assets['skill/skill1_1.png'];
+                if (name == 'kttk'){
+                    skill_fig.image = GameObject.assets['skill/skill1_1.png'];
 
-                skill_fig.tl
-                .moveBy(0, -25, 4);
-                skill_fig.tl
-                .moveBy(0, 25, 4);
-                skill_fig.tl
-                .moveBy(0, -25, 4);
-                skill_fig.tl
-                .moveBy(0, 25, 4)
-                .then(function(){
-                    if (with_rin){  //锤凛
-                        skill_fig.image = GameObject.assets['skill/skill1_2_1.png'];
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_2_2.png'];});
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_2_1.png'];});
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_2_2.png'];});
+                    skill_fig.tl
+                    .moveBy(0, -25, 4);
+                    skill_fig.tl
+                    .moveBy(0, 25, 4);
+                    skill_fig.tl
+                    .moveBy(0, -25, 4);
+                    skill_fig.tl
+                    .moveBy(0, 25, 4)
+                    .then(function(){
+                        if (with_rin){  //锤凛
+                            skill_fig.image = GameObject.assets['skill/skill1_2_1.png'];
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_2_2.png'];});
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_2_1.png'];});
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_2_2.png'];});
 
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
 
-                    }
-                    else if(stg == 2){  //锤人
-                        skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_2.png'];});
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];});
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_2.png'];});
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];});
-                    
-                        skill_fig.tl
-                        .delay(5)
-                        .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
+                        }
+                        else if(stg == 2){  //锤人
+                            skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_2.png'];});
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];});
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_2.png'];});
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];});
+                        
+                            skill_fig.tl
+                            .delay(5)
+                            .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
 
-                    }else{ //什么也没发生
+                        }else{ //什么也没发生
+                            skill_fig.tl
+                            .delay(10)
+                            .then(function(){skill_fig.image = GameObject.assets['skill/skill1_4.png'];});
+
+                            skill_fig.tl
+                            .delay(10)
+                            .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
+
+                        }
+
+                
+                    });
+
+                }else if (name == 'sakura'){
+                    skill_fig.image = GameObject.assets['skill/skill2_1.png'];
+
+                    skill_fig.tl
+                    .moveBy(0, -25, 4);
+                    skill_fig.tl
+                    .moveBy(0, 25, 4);
+                    skill_fig.tl
+                    .moveBy(0, -25, 4);
+                    skill_fig.tl
+                    .moveBy(0, 25, 4)
+                    .then(function(){
+                        skill_fig.image = GameObject.assets['skill/skill2_2.png'];
+                        skill_fig.tl.rotateBy(10,5);
+                        skill_fig.tl.rotateBy(-10,5);
+                        skill_fig.tl.rotateBy(-10,5);
+                        skill_fig.tl.rotateBy(10,5);
+                        
+
                         skill_fig.tl
                         .delay(10)
-                        .then(function(){skill_fig.image = GameObject.assets['skill/skill1_4.png'];});
-
-                        skill_fig.tl
-                        .delay(10)
                         .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
 
-                    }
+                    });
 
-            
-                })
+                }
 
-                function after(){
+                
 
-                    
+                function after(){   
 
                     if(stg==0){
-
-                        // alert(stg);
 
                         label.text = '然而什么也没发生';
                         recover();
@@ -633,24 +662,32 @@ window.onload = function () {
 
             function show_skill(){//之后改成根据组合判断技能==============================
 
-                if (queue.length == 0){
-                    kttk(stage, 0);
+                if(meetObj!=null && meetObj.name == '凛'){
+                    do_skill('sakura',stage, 0);
+                }else{
+
+                    if (queue.length == 0){
+                    do_skill('kttk',stage, 0);
                     
-                }
-                if (queue.length >= 1){
-
-                    if (queue[0].name == '凛' || (queue.length==2 &&queue[1].name == '凛')){
-                       if (Math.random()<0.55){ //锤肩
-                            kttk(stage, 0);
-                       }else{ //合体特技(锤凛)
-                            kttk(stage, 1);
-                       }
-
-                    }else{ //卯月单人技能
-                        
-                        kttk(stage, 0);
                     }
+                    if (queue.length >= 1){
+
+                        if (queue[0].name == '凛' || (queue.length==2 &&queue[1].name == '凛')){
+                        if (Math.random()<0.55){ //锤肩
+                                do_skill('kttk',stage, 0);
+                        }else{ //合体特技(锤凛)
+                                do_skill('kttk',stage, 1);
+                        }
+
+                        }else{ //卯月单人技能
+                            
+                            kttk(stage, 0);
+                        }
+                    }
+
                 }
+
+                
  
 
             }
