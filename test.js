@@ -1,8 +1,8 @@
 enchant();
-var VERSION = "ver 0.0.0";
+var VERSION = "ver 1.0.0";
 
 
-function Cat(name, enqueue_fig, store_fig, store_when_enq,sound,touch){
+function Cat(name, enqueue_fig, store_fig, store_when_enq,sound,touch,reaction){
     this.name = name;
     this.enqueue_fig = enqueue_fig;
     this.store_fig = store_fig;
@@ -10,6 +10,7 @@ function Cat(name, enqueue_fig, store_fig, store_when_enq,sound,touch){
     this.meet_time = 0;
     this.sound = sound;
     this.touch = touch;
+    this.reaction = reaction;
 }
 
 function Customer(name,figure,reaction,tag){
@@ -25,7 +26,7 @@ var DISPLAY_Y = 1000;
 var GameObject = null;
 var SceneMaker = {}
 
-var unit = '';
+var unit = '';   //'' uzurin uzumio NG
 var end_tag = ''; //normal 346<-常务
 
 window.onload = function () {
@@ -60,10 +61,19 @@ window.onload = function () {
         'cats/cat2.png',
 
         'cats/cat3_store1.png',
+        'cats/cat3_store1_1.png',
         'cats/cat3_store2.png',
+        'cats/cat3_store2_1.png',
+        'cats/cat3_touch.png',
+        'cats/cat3_sp.png',
         'cats/cat3.png',
 
         'cats/cat4_store.png',
+        'cats/cat4_store_sp.png',
+
+        'cats/cat5_store.png',
+        'cats/cat6_store.png',
+        'cats/cat7_store.png',
     
         'btn/skip.png',
         'btn/bt1.png',
@@ -89,7 +99,19 @@ window.onload = function () {
         'skill/skill1_4.png',
 
         'skill/skill2_1.png',
-        'skill/skill2_2.png'
+        'skill/skill2_2.png',
+
+        'skill/skill3.png',
+        'skill/skill3_sp_1.png',
+        'skill/skill3_sp_2.png',
+
+        'skill/skill4_1.png',
+        'skill/skill4_2.png',
+
+        'food/food1.png',
+        'food/food2.png',
+        'food/food3.png'
+
         );
 
     GameObject.onload = function () {
@@ -137,11 +159,24 @@ window.onload = function () {
 
         SceneMaker.createGameScene = function () {
             var cat_list =[
-                new Cat('凛', 'cats/cat2.png', ['cats/cat2_store1.png','cats/cat2_store2_1.png'],['cats/cat2_store1_1.png','cats/cat2_store2_2.png'],'ふーん','cats/cat2_touch.png'),
-                new Cat('未央', '', ['cats/cat3_store1.png','cats/cat3_store2.png'],[],'MIO',''),
+                new Cat('凛', 'cats/cat2.png', 
+                        ['cats/cat2_store1.png','cats/cat2_store2_1.png'],
+                        ['cats/cat2_store1_1.png','cats/cat2_store2_2.png'],
+                        'ふーん','cats/cat2_touch.png',
+                        []),
+
+                new Cat('未央', 'cats/cat3.png', 
+                        ['cats/cat3_store1.png','cats/cat3_store2.png'],
+                        ['cats/cat3_store1_1.png','cats/cat3_store2_1.png',],
+                        'MIO','cats/cat3_touch.png',
+                        ['未央猫用爪子挠了挠头','未央猫抖了抖耳朵']),
                 
-                // new Cat('响子画的', 'test.png', ['test.png'],['test.png'],'233',''),
-                new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...',''),
+                
+                new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...','',['什么也没有发生','卯月偷吃了一口蛋包饭']),
+
+                new Cat('美穗和响子', '', ['cats/cat5_store.png',],[],'Palette!','',['什么也没有发生','美穗响子蹭了蹭卯月']),
+                new Cat('未来', '', ['cats/cat6_store.png',],[],'にゃー！','',['什么也没有发生','未来啃起了猫耳']),
+                new Cat('あかり', '', ['cats/cat7_store.png',],[],'んご！','',['什么也没有发生','あかり咬起了苹果']),
             
             ]
 
@@ -151,11 +186,11 @@ window.onload = function () {
                             ['win','lose','touch']),
 
                 new Customer('小情侣','chara/chr2.png',
-                            ['送出了生火腿蜜瓜','摸了摸卯月猫的肚皮'],
-                            ['win','touch']),
+                            ['送出了生火腿蜜瓜','摸了摸卯月猫的肚皮',['获得了半块蜜瓜','food/food2.png']],
+                            ['win','touch','eat']),
                 new Customer('在撸自己家的猫的Big Bridge小姐','chara/chr3.png',
-                            ['自己吃了生火腿蜜瓜','摸了摸卯月猫'],
-                            ['txt','touch']),
+                            ['自己吃了生火腿蜜瓜','摸了摸卯月猫',['获得了ふーたそ的小鱼干','food/food1.png'],['获得了一叉子意面','food/food3.png']],
+                            ['txt','touch','eat','eat']),
             
             ];
 
@@ -169,6 +204,8 @@ window.onload = function () {
             var tmp_index = null;
             var tmp_index1 = null;
             unit = '';
+
+            var home_rice = 0;
 
             var scene = new Scene();
             scene.backgroundColor = '#ffffff';
@@ -222,14 +259,22 @@ window.onload = function () {
                 cat1.image = GameObject.assets['cats/cat1_touch.png']; 
                 if (queue.length>0){
                     if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2_touch_sp.png']; 
-                    else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2_touch_sp.png']; 
+                    else if(queue.length==2 && queue[1].name == '凛'){
+                        cat3.image = GameObject.assets['cats/cat2_touch_sp.png']; 
+                        if (queue[0].name == '未央') cat2.image = GameObject.assets['cats/cat3_sp.png']; 
+                    } 
+
                 }
+                
             });
             cat1.addEventListener(Event.TOUCH_END, function (e) {
                 cat1.image = GameObject.assets['cats/cat1.png']; 
                 if (queue.length>0){
                     if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2.png']; 
-                    else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2.png']; 
+                    else if(queue.length==2 && queue[1].name == '凛'){
+                        cat3.image = GameObject.assets['cats/cat2.png']; 
+                        if (queue[0].name == '未央') cat2.image = GameObject.assets['cats/cat3.png'];
+                    } 
                 }
             });
 
@@ -350,7 +395,9 @@ window.onload = function () {
                     if (cat_list[0].meet_time==2 && cat_list[0].name=='凛' && ((queue.length==0)||(queue.length==1&&queue[0].name!='凛'))){ 
                         
                         if(unit == '') unit = 'uzurin';
-                        else if (unit == 'uzumio') unit == 'NG';
+                        else if (unit == 'uzumio') unit = 'NG';
+
+                        // alert(unit);
                         
                         label.text = "凛跟了过来";
                         if(queue.length==0)
@@ -405,7 +452,10 @@ window.onload = function () {
                 var index1 = Math.floor((Math.random()* cat_list[index].store_fig.length)); 
                 
                 meet.image = GameObject.assets[cat_list[index].store_fig[index1]];
-                label.text = cat_list[index].name + "出现了";
+
+                if(home_rice>=3 && cat_list[index].name=='响子画的猫'){
+                    label.text = cat_list[index].name+"…猫呢？？！";
+                }else label.text = cat_list[index].name + "出现了";
 
                 meetObj = cat_list[index];
                 tmp_index = index;
@@ -459,6 +509,8 @@ window.onload = function () {
 
             function do_skill(name,stg, with_rin){
 
+                var notice_prob = 0.2;
+
                 if (name == 'kttk'){
                     skill_fig.image = GameObject.assets['skill/skill1_1.png'];
 
@@ -472,6 +524,9 @@ window.onload = function () {
                     .moveBy(0, 25, 4)
                     .then(function(){
                         if (with_rin){  //锤凛
+
+                            notice_prob = 0.45;
+
                             skill_fig.image = GameObject.assets['skill/skill1_2_1.png'];
                             skill_fig.tl
                             .delay(5)
@@ -489,6 +544,9 @@ window.onload = function () {
 
                         }
                         else if(stg == 2){  //锤人
+
+                            notice_prob = 0.5;
+
                             skill_fig.image = GameObject.assets['skill/skill1_3_1.png'];
                             skill_fig.tl
                             .delay(5)
@@ -546,6 +604,52 @@ window.onload = function () {
 
                     });
 
+                }else if (name == 'suri'){
+
+                    notice_prob = 0.45;
+
+                    skill_fig.image = GameObject.assets['skill/skill3.png'];
+                    skill_fig.tl.rotateBy(10,3);
+                    skill_fig.tl.rotateBy(-10,3);
+                    skill_fig.tl.rotateBy(-10,3);
+                    skill_fig.tl.rotateBy(10,3);
+                    if (with_rin){
+
+                        notice_prob = 0.65;
+
+                        skill_fig.tl
+                        .delay(5)
+                        .then(function(){skill_fig.image = GameObject.assets['skill/skill3_sp_1.png'];});
+                        skill_fig.tl
+                        .delay(5)
+                        .then(function(){skill_fig.image = GameObject.assets['skill/skill3_sp_2.png'];});
+                        skill_fig.tl
+                        .delay(5)
+                        .then(function(){skill_fig.image = GameObject.assets['skill/skill3_sp_1.png'];});
+                        skill_fig.tl
+                        .delay(5)
+                        .then(function(){skill_fig.image = GameObject.assets['skill/skill3_sp_2.png'];});
+                        
+                    }
+
+                    skill_fig.tl
+                    .delay(5)
+                    .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
+
+                }else if(name=='NG'){
+                    notice_prob = 0.9;
+                    skill_fig.image = GameObject.assets['skill/skill4_1.png'];
+                    skill_fig.tl.moveBy(0, -25, 4);
+                    skill_fig.tl.moveBy(0, 25, 4);
+                    skill_fig.tl.moveBy(0, -25, 4);
+                    skill_fig.tl.moveBy(0, 25, 4)
+                    .then(function(){
+                        skill_fig.image = GameObject.assets['skill/skill4_2.png'];
+                        skill_fig.tl
+                        .delay(20)
+                        .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
+                    });
+
                 }
 
                 
@@ -564,20 +668,38 @@ window.onload = function () {
                         if(meetObj.name=='凛'){
 
                             if(unit == '') unit = 'uzurin';
-                            else if (unit == 'uzumio') unit == 'NG'; 
+                            else if (unit == 'uzumio') unit = 'NG'; 
+
+                            // alert(unit);
 
                             label.text = "凛粘了过来";
                             enqueue();
                             return;
-                        }else if( Math.random()<0.3 && meetObj.enqueue_fig!='' ){
+                        }else if( Math.random()<0.45 && meetObj.enqueue_fig!='' ){
                             enqueue();
                             label.text = meetObj.name+"加入了队伍";
+
+                            if (meetObj.name=='未央'){
+                                if (unit == '') unit = 'uzumio';
+                                else if (unit == 'uzurin') unit = 'NG';
+
+                                // alert(unit);
+                            }
+
                             return;
                         }
-                        if (meetObj.name!='响子画的猫')
-                            label.text = meetObj.name+'用爪子挠了挠头';
-                        else
-                            label.text = '什么也没发生';
+                        else{
+                            var ind = Math.floor((Math.random()* meetObj.reaction.length));
+                            label.text = meetObj.reaction[ind];
+
+                            if (meetObj.reaction[ind]=='卯月偷吃了一口蛋包饭'){
+                                home_rice++;
+                                if(home_rice>=3){
+                                    cat_list[tmp_index] =new Cat('响子画的猫', '', ['cats/cat4_store_sp.png',],[],'......','',['什么也没有发生']); 
+                                }
+                            }
+                        }
+
 
                         recover();
 
@@ -587,7 +709,7 @@ window.onload = function () {
                         if (meetObj.name == '有点脸熟的OL') tmp = 0;
 
 
-                        if(tmp<0.5){  //看向了这边
+                        if(tmp<notice_prob){  //看向了这边
 
                             label.text = meetObj.name+'看向了这边';
 
@@ -607,15 +729,29 @@ window.onload = function () {
                                         GameObject.replaceScene(SceneMaker.GameOver());
                                         break;
                                     case "eat":
+                                        label.text = meetObj.reaction[index][0];
+                                        
+                                        skill_fig.image = GameObject.assets[meetObj.reaction[index][1]];
 
-                                        recover();
+                                        skill_fig.tl
+                                        .delay(50)
+                                        .then(function(){
+                                            skill_fig.image = GameObject.assets['emp_tmp.png']; 
+                                            label.text = '可惜不是生火腿';
+                                            recover();
+                                        });
+
+                                        
                                         break;
                                     case "touch"://摸摸卯卯猫猫
                                         label.text = meetObj.reaction[index];
                                         cat1.image = GameObject.assets['cats/cat1_touch.png']; 
                                         if (queue.length>0){
                                             if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2_touch_sp.png']; 
-                                            else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2_touch_sp.png']; 
+                                            else if(queue.length==2 && queue[1].name == '凛'){
+                                                cat3.image = GameObject.assets['cats/cat2_touch_sp.png']; 
+                                                if (queue[0].name == '未央') cat2.image = GameObject.assets['cats/cat3_sp.png']; 
+                                            } 
                                         }
                                         cat1.tl
                                         .delay(20)
@@ -623,7 +759,10 @@ window.onload = function () {
                                             cat1.image = GameObject.assets['cats/cat1.png']; 
                                             if (queue.length>0){
                                                 if (queue[0].name == '凛') cat2.image = GameObject.assets['cats/cat2.png']; 
-                                                else if(queue.length==2 && queue[1].name == '凛') cat3.image = GameObject.assets['cats/cat2.png']; 
+                                                else if(queue.length==2 && queue[1].name == '凛'){
+                                                    cat3.image = GameObject.assets['cats/cat2.png']; 
+                                                    if (queue[0].name == '未央') cat2.image = GameObject.assets['cats/cat3.png']; 
+                                                } 
                                             }
                                             recover();
                                         });
@@ -667,24 +806,45 @@ window.onload = function () {
                     do_skill('sakura',stage, 0);
                 }else{
 
-                    if (queue.length == 0){
-                    do_skill('kttk',stage, 0);
-                    
-                    }
-                    if (queue.length >= 1){
+                    if (unit == ''){
 
-                        if (queue[0].name == '凛' || (queue.length==2 &&queue[1].name == '凛')){
-                        if (Math.random()<0.55){ //锤肩
-                                do_skill('kttk',stage, 0);
+                        do_skill('kttk',stage, 0);
+
+                    }else if (unit == 'uzurin'){
+  
+                        if (Math.random()<0.5){ //锤肩
+                            do_skill('kttk',stage, 0);
                         }else{ //合体特技(锤凛)
-                                do_skill('kttk',stage, 1);
+                            do_skill('kttk',stage, 1);
                         }
 
-                        }else{ //卯月单人技能
-                            
-                            kttk(stage, 0);
+                    }else if(unit == 'uzumio'){
+
+                        do_skill('suri',stage, 0);
+
+                    }else if(unit=='NG'){
+
+                        var tmp = Math.random();
+
+                        // alert(tmp);
+
+                        if (tmp<0.25){
+                            do_skill('kttk',stage, 1);
+                        }else if(tmp<0.5){
+                            do_skill('suri',stage, 1);
+                        }else if(tmp<0.75){
+                            do_skill('NG',stage, 0);
+                        }else{
+                            do_skill('kttk',stage, 0);
                         }
+                    
+                    
+                    }else{ //卯月单人技能
+
+                        do_skill('kttk',stage, 0);
+
                     }
+                   
 
                 }
 
@@ -738,11 +898,16 @@ window.onload = function () {
             function meow(){
                 var uzu_sound = ['うづう〜','皮酿酿~','HEGO!'];
                 var index = Math.floor((Math.random()* uzu_sound.length));
+                var pcs_flag = 0;
                 //sp judge
-                if(meet.Obj!=null&&meetObj.figure=='chara/chr3.png') index = 2;
+                if(meetObj!=null && meetObj.figure=='chara/chr3.png') {
+                    index = 2;
+                }else if (meetObj!=null && meetObj.name=='美穗和响子' && queue.length==0){
+                    pcs_flag = 1;
+                }
 
                 txt1.image = GameObject.assets['txt/txt1.png'];
-                lb1.text = uzu_sound[index];
+                lb1.text = !pcs_flag?uzu_sound[index]:'Nice 团结';
                 txt1.tl
                 .delay(30)
                 .then(function(){
@@ -778,7 +943,7 @@ window.onload = function () {
                 function feedback(){
                     if(stage == 1){
                         txt0.image = GameObject.assets['txt/txt1.png'];
-                        label.text = meetObj.sound;
+                        label.text = !pcs_flag?meetObj.sound:'P.C.S YEAH!';
                         txt0.tl
                         .delay(30)
                         .then(function(){
