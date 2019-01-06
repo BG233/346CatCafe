@@ -1,5 +1,5 @@
 enchant();
-var VERSION = "ver 1.0.0";
+var VERSION = "ver 1.1.0";
 
 
 function Cat(name, enqueue_fig, store_fig, store_when_enq,sound,touch,reaction){
@@ -72,6 +72,12 @@ window.onload = function () {
         'cats/cat4_store_sp.png',
 
         'cats/cat5_store.png',
+        'cats/cat5_store_1.png',
+        'cats/cat5_1.png',
+        'cats/cat5_1_touch.png',
+        'cats/cat5_2.png',
+        'cats/cat5_2_touch.png',
+
         'cats/cat6_store.png',
         'cats/cat7_store.png',
     
@@ -107,6 +113,11 @@ window.onload = function () {
 
         'skill/skill4_1.png',
         'skill/skill4_2.png',
+
+        'skill/skill5_1.png',
+        'skill/skill5_2.png',
+        'skill/skill5_3.png',
+        'skill/skill5_4.png',
 
         'food/food1.png',
         'food/food2.png',
@@ -158,12 +169,16 @@ window.onload = function () {
         };
 
         SceneMaker.createGameScene = function () {
+
+            var miho = new Cat('美穗','cats/cat5_1.png',[],[],'ダメ','cats/cat5_1_touch.png',[]);
+            var kyoko = new Cat('响子','cats/cat5_2.png',[],[],'きょう','cats/cat5_2_touch.png',[]);
+
             var cat_list =[
                 new Cat('凛', 'cats/cat2.png', 
                         ['cats/cat2_store1.png','cats/cat2_store2_1.png'],
                         ['cats/cat2_store1_1.png','cats/cat2_store2_2.png'],
                         'ふーん','cats/cat2_touch.png',
-                        []),
+                        ['凛看起来很想粘过来']),
 
                 new Cat('未央', 'cats/cat3.png', 
                         ['cats/cat3_store1.png','cats/cat3_store2.png'],
@@ -174,7 +189,7 @@ window.onload = function () {
                 
                 new Cat('响子画的猫', '', ['cats/cat4_store.png',],[],'...','',['什么也没有发生','卯月偷吃了一口蛋包饭']),
 
-                new Cat('美穗和响子', '', ['cats/cat5_store.png',],[],'Palette!','',['什么也没有发生','美穗响子蹭了蹭卯月']),
+                new Cat('美穗和响子', '', ['cats/cat5_store.png',],['cats/cat5_store_1.png'],'Palette!','',['什么也没有发生','美穗响子蹭了蹭卯月']),
                 new Cat('未来', '', ['cats/cat6_store.png',],[],'にゃー！','',['什么也没有发生','未来啃起了猫耳']),
                 new Cat('あかり', '', ['cats/cat7_store.png',],[],'んご！','',['什么也没有发生','あかり咬起了苹果']),
             
@@ -196,6 +211,8 @@ window.onload = function () {
 
             var by_op1 = 0;
             var by_op2 = 0;
+
+            var pcs_enqueue = 0;
             
             var stage = 0;
             var queue = new Array();
@@ -486,14 +503,25 @@ window.onload = function () {
 
             function enqueue(){ 
                 if(queue.length<2){
-                    if(queue.length==0)
-                        cat2.image = GameObject.assets[meetObj.enqueue_fig];
-                    else if(queue.length == 1)
-                        cat3.image = GameObject.assets[meetObj.enqueue_fig];
-
-                    meet.image = GameObject.assets[meetObj.store_when_enq[tmp_index1]]
                     
-                    queue.push(cat_list[tmp_index]);
+                    
+                    if(!pcs_enqueue){
+                        if(queue.length==0)
+                            cat2.image = GameObject.assets[meetObj.enqueue_fig];
+                        else if(queue.length == 1)
+                            cat3.image = GameObject.assets[meetObj.enqueue_fig];
+
+                        // meet.image = GameObject.assets[meetObj.store_when_enq[tmp_index1]];
+                        queue.push(cat_list[tmp_index]);
+                    }
+                    else{
+                        // alert(233);
+                        queue.push(miho);
+                        queue.push(kyoko);
+                        cat2.image = GameObject.assets[miho.enqueue_fig];
+                        cat3.image = GameObject.assets[kyoko.enqueue_fig];
+                    }
+                    meet.image = GameObject.assets[meetObj.store_when_enq[tmp_index1]];
                     cat_list.splice(tmp_index,1);
 
                     can_pass = 1;
@@ -650,6 +678,31 @@ window.onload = function () {
                         .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
                     });
 
+                }else if(name == 'PCS1'){
+                    notice_prob = 0.9;
+                    skill_fig.image = GameObject.assets['skill/skill5_1.png'];
+                    skill_fig.tl.moveBy(0, -25, 5);
+                    skill_fig.tl.moveBy(0, 25, 5)
+                    .then(function(){
+                        skill_fig.image = GameObject.assets['skill/skill5_2.png'];
+                        skill_fig.tl.moveBy(0, -25, 5);
+                        skill_fig.tl.moveBy(0, 25, 5)
+                        .then(function(){
+                            skill_fig.image = GameObject.assets['skill/skill5_3.png'];
+                            skill_fig.tl.moveBy(0, -25, 5);
+                            skill_fig.tl.moveBy(0, 25, 5)
+                            .then(function(){
+                                skill_fig.image = GameObject.assets['skill/skill5_4.png'];
+                                skill_fig.tl
+                                .delay(20)
+                                .then(function(){skill_fig.image = GameObject.assets['emp_tmp.png']; after()});
+                                
+                            });
+                        
+                        });
+                        
+                    });
+
                 }
 
                 
@@ -662,10 +715,8 @@ window.onload = function () {
                         recover();
                     }else if (stg == 1){ //回喵 或者入队
 
-                        // alert(stg);
-
                         //特判凛直接入队
-                        if(meetObj.name=='凛'){
+                        if(meetObj.name=='凛' && queue.length<2){
 
                             if(unit == '') unit = 'uzurin';
                             else if (unit == 'uzumio') unit = 'NG'; 
@@ -675,7 +726,7 @@ window.onload = function () {
                             label.text = "凛粘了过来";
                             enqueue();
                             return;
-                        }else if( Math.random()<0.45 && meetObj.enqueue_fig!='' ){
+                        }else if( Math.random()<0.45 && meetObj.enqueue_fig!='' && queue.length<2){
                             enqueue();
                             label.text = meetObj.name+"加入了队伍";
 
@@ -686,6 +737,13 @@ window.onload = function () {
                                 // alert(unit);
                             }
 
+                            return;
+                        }else if(Math.random()<0.65 && meetObj.name=='美穗和响子' && queue.length==0){
+                            
+                            pcs_enqueue = 1;
+                            enqueue();
+                            label.text = meetObj.name+"加入了队伍";
+                            unit = 'PCS';
                             return;
                         }
                         else{
@@ -839,7 +897,16 @@ window.onload = function () {
                         }
                     
                     
-                    }else{ //卯月单人技能
+                    }else if (unit == 'PCS'){
+                        var tmp = Math.random();
+                        if (Math.random()<0.5){ //锤肩
+                            do_skill('kttk',stage, 0);
+                        }else{ //合体特技(锤凛)
+                            do_skill('PCS1',stage, 0);
+                        }
+
+                    }
+                    else{ //卯月单人技能
 
                         do_skill('kttk',stage, 0);
 
