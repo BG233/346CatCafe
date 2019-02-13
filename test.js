@@ -33,6 +33,9 @@ window.onload = function () {
     GameObject = new Core(DISPLAY_X, DISPLAY_Y);
     GameObject.fps = FPS;
     // GameObject.scale = 1;
+    var left = (0.5*window.innerWidth - window.innerHeight*0.32);
+    document.getElementById('enchant-stage').style.left = left+"px";
+
 
     GameObject.preload(
         'test.png',
